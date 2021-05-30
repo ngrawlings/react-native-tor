@@ -15,7 +15,19 @@ class TorPackage : ReactPackage {
   override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
     val manager = reactContext.getPackageManager();
     val ai = manager.getApplicationInfo(reactContext.packageName, PackageManager.GET_META_DATA);
-    System.load("${ai.nativeLibraryDir}/libsifir_android.so");
+    
+    // React native some times reports the wrong native library folder
+    // This is a quick hack to ensure the app does not crash if this happens.
+    // I admit it is not a correct fix but after many days searching. 
+    // This worked perfectly well and I could move on from this frustration.
+    
+    if (File("${ai.nativeLibraryDir}/libsifir_android.so").exists())
+      System.load("${ai.nativeLibraryDir}/libsifir_android.so");
+    else if (File("${ai.nativeLibraryDir}/../armeabi-v7a/libsifir_android.so").exists())
+      System.load("${ai.nativeLibraryDir}/../armeabi-v7a/libsifir_android.so");
+    else if (File("${ai.nativeLibraryDir}/../arm64-v8a/libsifir_android.so").exists())
+      System.load("${ai.nativeLibraryDir}/../armeabi-v8a/libsifir_android.so");
+
     return Arrays.asList<NativeModule>(TorModule(reactContext))
   }
 
