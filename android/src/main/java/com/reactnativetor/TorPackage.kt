@@ -22,12 +22,37 @@ class TorPackage : ReactPackage {
     // I admit it is not a correct fix but after many days searching. 
     // This worked perfectly well and I could move on from this frustration.
     
-    if (File("${ai.nativeLibraryDir}/libsifir_android.so").exists())
+    val arch = System.getProperty("os.arch");
+
+    if (File("${ai.nativeLibraryDir}/libsifir_android.so").exists()) {
+
       System.load("${ai.nativeLibraryDir}/libsifir_android.so");
-    else if (File("${ai.nativeLibraryDir}/../armeabi-v7a/libsifir_android.so").exists())
-      System.load("${ai.nativeLibraryDir}/../armeabi-v7a/libsifir_android.so");
-    else if (File("${ai.nativeLibraryDir}/../arm64-v8a/libsifir_android.so").exists())
-      System.load("${ai.nativeLibraryDir}/../armeabi-v8a/libsifir_android.so");
+
+    } else {
+      if (arch == 'arm64' or arch == "aarch64") {
+
+        if (File("${ai.nativeLibraryDir}/../${arch}/libsifir_android.so").exists()) {
+
+          System.load("${ai.nativeLibraryDir}/../${arch}/libsifir_android.so");
+
+        } else if (File("${ai.nativeLibraryDir}/../arm64-v8a/libsifir_android.so").exists()) {
+
+          System.load("${ai.nativeLibraryDir}/../arm64-v8a/libsifir_android.so");
+
+        } else
+          System.loadLibrary("sifir_android")
+
+      } else {
+
+        if (File("${ai.nativeLibraryDir}/../armeabi-v7a/libsifir_android.so").exists()) {
+
+          System.load("${ai.nativeLibraryDir}/../armeabi-v7a/libsifir_android.so");
+
+        } else
+          System.loadLibrary("sifir_android")
+
+      }
+    }
 
     return Arrays.asList<NativeModule>(TorModule(reactContext))
   }
