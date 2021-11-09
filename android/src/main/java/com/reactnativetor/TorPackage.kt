@@ -29,7 +29,7 @@ class TorPackage : ReactPackage {
       System.load("${ai.nativeLibraryDir}/libsifir_android.so");
 
     } else {
-      if (arch == 'arm64' or arch == "aarch64") {
+      if (arch == "arm64" || arch == "aarch64") {
 
         if (File("${ai.nativeLibraryDir}/../${arch}/libsifir_android.so").exists()) {
 
